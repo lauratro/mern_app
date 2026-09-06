@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useContext } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { BrowserRouter as Link } from "react-router-dom";
 import { VariablesContext } from "../context/VariablesContext";
 import {AuthContext} from "../context/AuthContext"
 import Map from "./googleMaps/GoogleMap";
 import { Paper, TextField, TextareaAutosize } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
-import Typography from "@material-ui/core/Typography";
-import ConvertedAddress from "./ConvertedAddress";
 const serverURL = require("../config.js").serverURL;
 
 //Style
 let marginInputGroup = {
-  //marginTop: 10,
   marginBottom: 15,
   display: "flex",
 
@@ -22,17 +19,6 @@ let marginInputGroup = {
 
 const Paperstyle = {
   padding: 10,
-};
-let alertPopup = {
-  position: " absolute",
-  bottom: -400,
-  width: 300,
-  height: 300,
-  display: "flex",
-  textAlign: "center",
-  alignContent: "flex-start",
-  justifyContent: "center",
-  alignItems: "center",
 };
 
 export default function FormPet() {
@@ -53,10 +39,10 @@ export default function FormPet() {
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [urlError] = useState("");
-  const {  userId} =
-  useContext(AuthContext);
- // let userId = localStorage.getItem("userId");
-
+/*   const {userId} =
+  useContext(AuthContext); */
+  let userId = localStorage.getItem("userId");
+console.log("userId", userId);
   const { markers } = useContext(VariablesContext);
 
 
@@ -250,19 +236,3 @@ export default function FormPet() {
   );
 }
 
-/* const { name,
-        setName,
-        type,
-        setType,
-        breed,
-        setBreed,
-        url,
-        setUrl,
-        info,
-        setInfo,
-        image,
-        setImage,
-        color,
-        setColor,
-        radio,
-        setRadio, markers, setMarkers, } = useContext(VariablesContext);*/
