@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { makeStyles } from "@material-ui/core/styles";
+import { Link } from "react-router-dom";
 import { VariablesContext } from "../context/VariablesContext";
 import BackAtHome from "./BackAtHomeButton";
 import RemovePost from "./RemovePostButton";

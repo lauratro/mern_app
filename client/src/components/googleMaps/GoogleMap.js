@@ -99,17 +99,10 @@ export default function Map() {
         {markers.map((marker) => (
           <Marker
             key={marker.time.toISOString()}
-            // key={`${marker.lat}-${marker.lng}`}
             position={{ lat: marker.lat, lng: marker.lng }}
             onClick={() => {
               setSelected(marker);
             }}
-            /*      icon={{
-              url: `/bear.svg`,
-              origin: new window.google.maps.Point(0, 0),
-              anchor: new window.google.maps.Point(15, 15),
-              scaledSize: new window.google.maps.Size(30, 30),
-            }} */
           />
         ))}
 
@@ -147,7 +140,6 @@ function Locate({ panTo }) {
         );
       }}
     >
-      {/*   <img src="/compass.svg" alt="compass" /> */}
       Find my location
     </button>
   );

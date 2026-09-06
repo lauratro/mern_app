@@ -1,6 +1,5 @@
 import React, {  useEffect, useContext } from "react";
-import { BrowserRouter as  useParams } from "react-router-dom";
-import { useHistory } from "react-router-dom";
+import { useParams, useHistory } from "react-router-dom";
 import Comment from "../components/CommentForm";
 import { makeStyles } from "@material-ui/core/styles";
 import { Paper } from "@material-ui/core";
@@ -44,15 +43,25 @@ export default function SinglePet(props) {
   let { id } = useParams();
  
  
+
   useEffect(() => {
     const singlePetfetch = () => {
+      console.log("Fetching:", `${serverURL}/pets/details/${id}`);
+
       fetch(`${serverURL}/pets/details/${id}`)
-        .then((res) => res.json())
+        .then((res) => {
+          console.log("SinglePet response status:", res.status);
+          return res.json();
+        })
         .then((data) => {
-        
+          console.log("SinglePet data:", data);
           setOnePet(data);
+        })
+        .catch((error) => {
+          console.error("SinglePet fetch error:", error);
         });
     };
+
     singlePetfetch();
   }, []);
 
