@@ -15,7 +15,7 @@ var fs = require("fs");
 
 //Initialise express app
 const app = express();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 5001;
 //connect to DB
 mongoose
   .connect(mongoURI, {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
-import { VariablesContext } from "../context/VariablesContext";
+import { VariablesContext } from "../context/VariablesContext.js";
 
 import Card from "@material-ui/core/Card";
 import { Paper } from "@material-ui/core";
@@ -14,7 +14,7 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 
-import RemoveFavorite from "../components/RemoveFavorite";
+import RemoveFavorite from "../components/RemoveFavorite.js";
 const serverURL = require("../config.js").serverURL;
 const useStyles = makeStyles((theme) => ({
   root: {
