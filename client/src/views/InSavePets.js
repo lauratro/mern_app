@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from "react";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import CardPet from "../components/Card";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import RegisterPet from "../components/RegisterPetButton";
 
 import { VariablesContext } from ".././context/VariablesContext";

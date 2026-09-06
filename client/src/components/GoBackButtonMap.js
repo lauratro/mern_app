@@ -8,10 +8,6 @@ const marginAppBarElem = {
 export  const GoBackButtonMap = () => {
   let history = useHistory();
 
-/*   function goBack() {
-    history.goBack();
-      localStorage.getItem('imageInLocalStorage')
-  } */
   return (
     <>
       <button onClick={ () => history.goBack() } style={marginAppBarElem}>

@@ -6,14 +6,11 @@ const serverURL = require("../config.js").serverURL;
 
 export default function ManageFavorite(props) {
  
-  const { heart, setHeart, userFavoritesArray,
+  const { setHeart,
     setUserFavoritesArray, } = useContext(VariablesContext);
 
   const petId = props.petId;
  const userId = localStorage.getItem("userId");
-
-  let userFavorites = props.petFavorite;
-
 
   function heartButton() {
     setHeart((prev) => (prev += 1));

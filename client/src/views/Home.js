@@ -1,9 +1,8 @@
 import React from "react";
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import styled, { keyframes } from "styled-components";
 import { fadeInLeft, fadeInRight } from "react-animations";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
-import logo from "../logo.png";
+import { makeStyles } from "@material-ui/core/styles";
 import "../styles/style.css";
 const useStyles = makeStyles((theme) => ({
   blockDiv: {

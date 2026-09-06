@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
 import "../../styles/SignUpForm.css";
 const serverURL = require("../../config.js").serverURL;
 const useStyles = makeStyles((theme) => ({

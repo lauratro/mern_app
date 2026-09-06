@@ -3,20 +3,17 @@ import { VariablesContext } from "../context/VariablesContext";
 import {AuthContext} from "../context/AuthContext"
 const serverURL = require("../config.js").serverURL;
 export default function BackAtHome(props) {
-  const {userId, setUserId } =
+  const {userId } =
     useContext(AuthContext);
   let userIdOfThePost = props.userIdOfThePost._id;
 
   let petId = props.petId;
   let petInSave = props.inSave;
 
-  const [inSavePet, setInSavePet] = useState(true);
+  const [inSavePet] = useState(true);
   const [showCheck, setShowCheck] = useState(false);
   let { countInSave, setCountInSave } = useContext(VariablesContext);
   
-  let inSaveTrue = () => {
-    setInSavePet(true);
-  };
   let addCount = () => {
     setCountInSave((countInSave += 1));
   };

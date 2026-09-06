@@ -42,7 +42,7 @@ export default function CardPet(props) {
 
   let petFavorite = pet.favorite;
 
-  let [numberFavorite, setNumberFavorite] = useState([]);
+  let [setNumberFavorite] = useState([]);
 
 
   const {
