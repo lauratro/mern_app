@@ -61,7 +61,7 @@ export default function PetsLost() {
           console.log(err);
         });
     } else {
-      console.log("You have to logIn");
+      console.log("You have to login");
     }
   }, [userFavoritesArray, removePost, heart]);
   return (

@@ -51,7 +51,6 @@ const LogOut = () => {
 
  
   };
-  console.log("in button", isLoggedIn);
   return (
     <div>
       <Link to="/">
