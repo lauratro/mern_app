@@ -3,9 +3,7 @@ import { VariablesContext } from "../../context/VariablesContext";
 import { AuthContext } from "../../context/AuthContext";
 import "../../styles/SignUpForm.css";
 import { makeStyles } from "@material-ui/core/styles";
-import {
-  useHistory
-} from "react-router-dom";
+import { useHistory } from "react-router-dom";
 const serverURL = require("../../config.js").serverURL;
 const useStyles = makeStyles((theme) => ({
   widthForm: {
@@ -13,26 +11,21 @@ const useStyles = makeStyles((theme) => ({
     width: 350,
     margin: "0 auto",
     boxShadow: "1px 1px 4px 10px rgba(120,120,120,0.23)",
-    padding:10,
-    paddingBottom:20,
-    borderRadius:10,
-
+    padding: 10,
+    paddingBottom: 20,
+    borderRadius: 10,
   },
-}))
+}));
 export default function SignIn() {
   const history = useHistory();
   const classes = useStyles();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorText, setErrorText] = useState("");
-  const {  setUsernameStorage } = useContext(VariablesContext);
-  const {userInfo, setUserInfo,  setIsLoggedIn, userId, setUserId } =
-    useContext(AuthContext);
+  const { setUsernameStorage } = useContext(VariablesContext);
+  const { setUserInfo, setIsLoggedIn, setUserId } = useContext(AuthContext);
 
   const accessToken = localStorage.getItem("accessToken");
-
-
- 
 
   let getLogIn = () => {
     fetch(serverURL + "/users/login", {
@@ -50,10 +43,9 @@ export default function SignIn() {
         localStorage.setItem("accessToken", data.token);
         if (data.token !== undefined) {
           localStorage.setItem("loggedIn", data.loggedIn);
-         setIsLoggedIn(true);
-         setUserInfo(data.user);
-         setUserId(data.user._id)
-   
+          setIsLoggedIn(true);
+          setUserInfo(data.user);
+          setUserId(data.user._id);
         }
         localStorage.setItem("usernameStorage", data.user.username);
         setUsernameStorage(data.user.username);
@@ -61,12 +53,11 @@ export default function SignIn() {
         localStorage.setItem("userEmail", data.user.email);
         localStorage.setItem("userId", data.user._id);
         localStorage.setItem("userFavorites", data.favorites);
-        localStorage.setItem("userInfo",data.user)
-  
+        localStorage.setItem("userInfo", data.user);
+
         history.push("/Form");
         if (accessToken !== undefined) {
-      
-         setErrorText("");
+          setErrorText("");
         }
       })
       .catch((err) => {
