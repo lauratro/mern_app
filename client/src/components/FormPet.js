@@ -33,12 +33,10 @@ export default function FormPet() {
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-/*   const {userId} =
+  /*   const {userId} =
   useContext(AuthContext); */
   let userId = localStorage.getItem("userId");
   const { markers } = useContext(VariablesContext);
-
-
 
   //Update image
 
@@ -55,9 +53,14 @@ export default function FormPet() {
           species,
           breed,
           color,
-          location: markers.length > 0
-            ? { lat: markers[0].lat, lng: markers[0].lng }
-            : undefined,
+          location:
+            markers.length > 0
+              ? {
+                  lat: markers[0].lat,
+                  lng: markers[0].lng,
+                  address: markers[0].address,
+                }
+              : undefined,
           info,
           img: url,
           userId,
@@ -66,7 +69,6 @@ export default function FormPet() {
       })
         .then((res) => res.json())
         .then((data) => {
- 
           if (data.error === undefined) {
             setError(false);
             setErrorMessage("");
@@ -92,15 +94,12 @@ export default function FormPet() {
     })
       .then((res) => res.json())
       .then((data) => {
-
-
         setUrl(data.url);
       })
       .catch((err) => {
         console.log("err", err);
       });
   };
-
 
   let postSubmitted = () => {
     setSubmitted(true);

@@ -55,18 +55,46 @@ export default function Map() {
     libraries,
   });
   const { markers, setMarkers } = useContext(VariablesContext);
-  //const [markers, setMarkers] = React.useState([]);
   const [selected, setSelected] = React.useState(null);
-  localStorage.setItem("markers", markers);
-  const onMapClick = React.useCallback((e) => {
-    setMarkers([
-      {
-        lat: e.latLng.lat(),
-        lng: e.latLng.lng(),
-        time: new Date(),
-      },
-    ]);
-  }, []);
+  //localStorage.setItem("markers", markers);
+  const onMapClick = React.useCallback(
+    (e) => {
+      const lat = e.latLng.lat();
+      const lng = e.latLng.lng();
+
+      const geocoder = new window.google.maps.Geocoder();
+
+      geocoder.geocode(
+        {
+          location: { lat, lng },
+        },
+        (results, status) => {
+          if (status === "OK" && results?.length > 0) {
+            const location = {
+              lat,
+              lng,
+              address: results[0].formatted_address,
+            };
+
+            console.log("Selected location:", location);
+
+            setMarkers([location]);
+          } else {
+            console.error("Reverse geocoding failed:", status);
+
+            setMarkers([
+              {
+                lat,
+                lng,
+                address: "",
+              },
+            ]);
+          }
+        }
+      );
+    },
+    [setMarkers]
+  );
 
   const mapRef = React.useRef();
   const onMapLoad = React.useCallback((map) => {
@@ -97,7 +125,7 @@ export default function Map() {
       >
         {markers.map((marker) => (
           <Marker
-            key={marker.time.toISOString()}
+            key={`${marker.lat}-${marker.lng}`}
             position={{ lat: marker.lat, lng: marker.lng }}
             onClick={() => {
               setSelected(marker);
