@@ -37,6 +37,7 @@ export default function PetsFound() {
     removePost,
   
     heart,
+    countInSave,
    
     userFavoritesArray,
 
@@ -53,7 +54,7 @@ export default function PetsFound() {
         setPets(data);
    
       });
-  }, [removePost, heart, userFavoritesArray]);
+  }, [removePost, heart, userFavoritesArray, countInSave, setPets]);
 
   return (
     <div style={{ marginTop: 80, width: "100vw", textAlign: "center" }}>
@@ -65,7 +66,7 @@ export default function PetsFound() {
       {/*  <div className={classes.registerButtonDiv}>{loggedIn ? <Link to="/Form"><button className={classes.registrButton} >Register a Pet</button></Link>: <p className={classes.logInRequest}>Please Log in to register a pet</p>}</div> */}
       <div className={classes.blockContainer}>
         {pets.map((pet) => {
-          return <CardPet pet={pet} />;
+          return <CardPet key={pet.id} pet={pet} />;
         })}
       </div>
     </div>

@@ -37,6 +37,7 @@ export default function PetsLost() {
     removePost,
     
     heart,
+    countInSave,
    
     userFavoritesArray,
  
@@ -63,7 +64,7 @@ export default function PetsLost() {
     } else {
       console.log("You have to login");
     }
-  }, [userFavoritesArray, removePost, heart]);
+  }, [userFavoritesArray, removePost, heart, countInSave, accessToken]);
   return (
     <div style={{ marginTop: 80, width: "100vw", textAlign: "center" }}>
       <h2 className={classes.title}>Lost Pets</h2>
@@ -72,7 +73,7 @@ export default function PetsLost() {
       <div className={classes.blockContainer}>
         {pets.length > 0 &&
           pets.map((pet) => {
-            return <CardPet pet={pet} />;
+            return <CardPet key={pet.id} pet={pet} />;
           })}
       </div>
     </div>

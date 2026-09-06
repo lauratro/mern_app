@@ -43,27 +43,16 @@ export default function SinglePet(props) {
   let { id } = useParams();
  
  
-
   useEffect(() => {
     const singlePetfetch = () => {
-      console.log("Fetching:", `${serverURL}/pets/details/${id}`);
-
       fetch(`${serverURL}/pets/details/${id}`)
-        .then((res) => {
-          console.log("SinglePet response status:", res.status);
-          return res.json();
-        })
+        .then((res) => res.json())
         .then((data) => {
-          console.log("SinglePet data:", data);
           setOnePet(data);
-        })
-        .catch((error) => {
-          console.error("SinglePet fetch error:", error);
         });
     };
-
     singlePetfetch();
-  }, []);
+  }, [id, setOnePet]);
 
   const classes = useStyles();
 
@@ -95,7 +84,7 @@ export default function SinglePet(props) {
                   component="p"
                 >
                   <span style={{ fontWeight: "bold" }}> Species: </span>
-                  {onePet.type}
+                  {onePet.species}
                 </Paper>
                 <Paper
                   className={classes.paperElem}
@@ -127,8 +116,8 @@ export default function SinglePet(props) {
                 color="textSecondary"
                 component="p"
               >
-                {onePet.markers && (
-                  <ConvertedAddress markers={onePet.markers} />
+                {onePet.location && (
+                  <ConvertedAddress location={onePet.location} />
                 )}
               </Typography>
             </CardContent>
@@ -145,7 +134,7 @@ export default function SinglePet(props) {
         <div>
           <DisplayComment petComments={onePet.comments} petId={onePet._id} />
 
-          <Comment petId={id} />
+          <Comment petId={onePet._id} />
         </div>
       </div>
     )

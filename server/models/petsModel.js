@@ -1,17 +1,27 @@
 const mongoose = require("mongoose");
-const { ObjectId } = mongoose.Schema.Types;
 const petSchema = new mongoose.Schema(
   {
-    radio: {
+    id: {
       type: String,
+      required: true,
+      unique: true,
+      index: true,
     },
-    /*  userId: {
-      type:String,
-    }, */
+    reportType: {
+      type: String,
+      enum: ["lost", "found"],
+      required: true,
+    },
+    status: {
+      type: String,
+      enum: ["active", "resolved"],
+      default: "active",
+      required: true,
+    },
     name: {
       type: String,
     },
-    type: {
+    species: {
       type: String,
     },
     breed: {
@@ -20,17 +30,22 @@ const petSchema = new mongoose.Schema(
     color: {
       type: String,
     },
-    markers: {
-      type: Array,
+    location: {
+      lat: {
+        type: Number,
+      },
+      lng: {
+        type: Number,
+      },
+      address: {
+        type: String,
+      },
     },
     info: {
       type: String,
     },
     img: {
       type: String,
-    },
-    inSave: {
-      type: Boolean,
     },
     favorite: {
       type: Array,
@@ -55,6 +70,5 @@ const petSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-//let Pet = mongoose.model("Pet", petSchema);
 module.exports = mongoose.model("Pet", petSchema);
 //module.exports ={Pet}

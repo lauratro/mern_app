@@ -36,6 +36,7 @@ export default function InSavePet() {
  
   const {
     heart,
+    countInSave,
    
     removePost,
   
@@ -44,13 +45,13 @@ export default function InSavePet() {
   } = useContext(VariablesContext);
   const [pets, setPets] = useState([]);
   useEffect(() => {
-    fetch(serverURL + "/pets/inSave")
+    fetch(serverURL + "/pets/resolved")
       .then((res) => res.json())
       .then((data) => {
         setPets(data);
        
       });
-  }, [heart, removePost, userFavoritesArray]);
+  }, [heart, removePost, userFavoritesArray, countInSave]);
 
   return (
     <div style={{ marginTop: 80, width: "100vw", textAlign: "center" }}>
@@ -61,7 +62,7 @@ export default function InSavePet() {
       <RegisterPet />
       <div className={classes.blockContainer}>
         {pets.map((pet) => {
-          return <CardPet pet={pet} />;
+          return <CardPet key={pet.id} pet={pet} />;
         })}
       </div>
     </div>

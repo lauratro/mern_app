@@ -8,9 +8,7 @@ export default function BackAtHome(props) {
   let userIdOfThePost = props.userIdOfThePost._id;
 
   let petId = props.petId;
-  let petInSave = props.inSave;
-
-  const [inSavePet] = useState(true);
+  let isResolved = props.status === "resolved";
   const [showCheck, setShowCheck] = useState(false);
   let { countInSave, setCountInSave } = useContext(VariablesContext);
   
@@ -30,7 +28,6 @@ export default function BackAtHome(props) {
         "Content-Type": "Application/json",
       },
       body: JSON.stringify({
-        inSavePet,
         petId,
       }),
     })
@@ -67,7 +64,7 @@ export default function BackAtHome(props) {
   };
   return (
     <div>
-      {userId === userIdOfThePost && !petInSave && (
+      {userId === userIdOfThePost && !isResolved && (
         <button onClick={showCheckText} style={buttonStyle}>
           Back at home
         </button>

@@ -221,7 +221,7 @@ export default function UserProfile() {
                 <CardActions>
                   <div className={classes.seeMoreDiv}>
                     <Link
-                      to={`details/${post._id}`}
+                      to={`/details/${post.id}`}
                       style={{ textDecoration: "none" }}
                     >
                       <h3 className={classes.seeMoreButton}>See more</h3>

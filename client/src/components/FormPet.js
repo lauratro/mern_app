@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
 import { BrowserRouter as Link } from "react-router-dom";
 import { VariablesContext } from "../context/VariablesContext";
-import {AuthContext} from "../context/AuthContext"
 import Map from "./googleMaps/GoogleMap";
 import { Paper, TextField, TextareaAutosize } from "@material-ui/core";
 import { Alert } from "@material-ui/lab";
@@ -23,26 +22,20 @@ const Paperstyle = {
 
 export default function FormPet() {
   const [name, setName] = useState("");
-  const [type, setType] = useState("");
+  const [species, setSpecies] = useState("");
   const [breed, setBreed] = useState("");
   const [image, setImage] = useState("");
   const [url, setUrl] = useState("");
   const [info, setInfo] = useState("");
   const [color, setColor] = useState("");
-  const [radio, setRadio] = useState("");
-  const [inSave] = useState(false);
-
-
-  const [comment] = useState([]);
+  const [reportType, setReportType] = useState("");
   const [favorite] = useState([]);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [urlError] = useState("");
 /*   const {userId} =
   useContext(AuthContext); */
   let userId = localStorage.getItem("userId");
-console.log("userId", userId);
   const { markers } = useContext(VariablesContext);
 
 
@@ -57,16 +50,16 @@ console.log("userId", userId);
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          radio,
+          reportType,
           name,
-          type,
+          species,
           breed,
           color,
-          markers,
+          location: markers.length > 0
+            ? { lat: markers[0].lat, lng: markers[0].lng }
+            : undefined,
           info,
           img: url,
-          comment,
-          inSave,
           userId,
           favorite,
         }),
@@ -74,7 +67,7 @@ console.log("userId", userId);
         .then((res) => res.json())
         .then((data) => {
  
-          if (data.error == undefined) {
+          if (data.error === undefined) {
             setError(false);
             setErrorMessage("");
           } else {
@@ -126,8 +119,8 @@ console.log("userId", userId);
           id="lost"
           name="situation"
           value="lost"
-          checked={radio === "lost" && true}
-          onChange={(e) => setRadio(e.target.value)}
+          checked={reportType === "lost"}
+          onChange={(e) => setReportType(e.target.value)}
           required
           style={{ margin: 10 }}
         />
@@ -137,8 +130,8 @@ console.log("userId", userId);
           id="found"
           name="situation"
           value="found"
-          checked={radio === "found" && true}
-          onChange={(e) => setRadio(e.target.value)}
+          checked={reportType === "found"}
+          onChange={(e) => setReportType(e.target.value)}
           required
           style={{ margin: 10 }}
         />
@@ -150,12 +143,12 @@ console.log("userId", userId);
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
-          <label forhtml="type">Pet's specie</label>
+          <label forhtml="species">Pet's species</label>
           <TextField
             type="text"
-            name="type"
-            value={type}
-            onChange={(e) => setType(e.target.value)}
+            name="species"
+            value={species}
+            onChange={(e) => setSpecies(e.target.value)}
           />
           <label forhtml="breed">Pet's breed</label>
           <TextField
@@ -235,4 +228,3 @@ console.log("userId", userId);
     </div>
   );
 }
-

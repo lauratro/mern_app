@@ -6,8 +6,7 @@ const serverURL = require("../config.js").serverURL;
 
 export default function ManageFavorite(props) {
  
-  const { setHeart,
-    setUserFavoritesArray, } = useContext(VariablesContext);
+  const { setHeart } = useContext(VariablesContext);
 
   const petId = props.petId;
  const userId = localStorage.getItem("userId");
@@ -29,13 +28,9 @@ export default function ManageFavorite(props) {
       }),
     })
       .then((res) => res.json())
-      .then((data) => {
-    
-        setUserFavoritesArray(data.addFavUser.favorites)
-      });
+      .then(() => heartButton());
   };
   let addFavoriteAndFetch = () => {
-    heartButton();
     addFavorite();
   };
 

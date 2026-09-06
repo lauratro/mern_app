@@ -3,15 +3,18 @@ import React, { useState, useEffect } from "react";
 import Geocode from "react-geocode";
 
 export default function ConvertedAddress(props) {
-  let markers = props.markers;
-
-
-  const [addressPet, setAddressPet] = useState("");
+  const location = props.location;
+  const [addressPet, setAddressPet] = useState(location?.address || "");
 
   useEffect(() => {
-    if (markers !== undefined && markers.length > 0) {
-      let lat = markers[0].lat;
-      let lng = markers[0].lng;
+    if (location?.address) {
+      setAddressPet(location.address);
+      return;
+    }
+
+    if (location?.lat != null && location?.lng != null) {
+      let lat = location.lat;
+      let lng = location.lng;
    
 
       /*   const KEY = "process.env.REACT_APP_GOOGLE_API_KEY";*/
@@ -47,10 +50,8 @@ export default function ConvertedAddress(props) {
           console.error(error);
         }
       );
-    } else {
-      console.log("no location selected");
     }
-  }, []);
+  }, [location]);
   return (
     <div>
       <span style={{ fontWeight: "bold" }}>Address: </span>

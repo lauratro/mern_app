@@ -1,138 +1,153 @@
 const express = require("express");
+const { randomUUID } = require("crypto");
+
 const router = express.Router();
-const mongoose = require("mongoose");
+
 const userModel = require("../models/usersModel");
 const petModel = require("../models/petsModel");
-const commentModel = require("../models/commentModel");
-const petDetailsModel = require("../models/petDetailsModel");
 const requireLogin = require("../middleware/requireLogin");
 
-//const upload = require("../middleware/upload");
+// Get all pets
 router.get("/all", (req, res) => {
   petModel.find({}, function (err, pets) {
     if (err) {
-      res.send(err);
+      res.status(500).json({ error: err.message });
     } else {
-      res.send(pets);
+      res.json(pets);
     }
   });
 });
-module.exports = router;
 
-// only Lost Pets
+// Get active lost pets
 router.get("/lost", requireLogin, (req, res) => {
   petModel
-    .find({ radio: "lost" }, function (err, pets) {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(pets);
+    .find(
+      {
+        reportType: "lost",
+        status: "active",
+      },
+      function (err, pets) {
+        if (err) {
+          res.status(500).json({ error: err.message });
+        } else {
+          res.json(pets);
+        }
       }
-    })
+    )
     .populate("userId");
 });
-//only Found pets
+
+// Get active found pets
 router.get("/found", (req, res) => {
   petModel
-    .find({ radio: "found" }, function (err, pets) {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(pets);
+    .find(
+      {
+        reportType: "found",
+        status: "active",
+      },
+      function (err, pets) {
+        if (err) {
+          res.status(500).json({ error: err.message });
+        } else {
+          res.json(pets);
+        }
       }
-    })
+    )
     .populate("userId");
 });
-//only in Save pets
-router.get("/inSave", (req, res) => {
-  petModel
-    .find({ inSave: true }, function (err, pets) {
-      if (err) {
-        res.send(err);
-      } else {
-        res.send(pets);
-      }
-    })
-    .populate("userId");
-});
-// More details single pet
-router.get("/details/:id", (req, res) => {
-  let petId = req.params.id;
 
-  petModel.findById(petId).exec(function (err, pet) {
-    if (err) {
-      console.log("err");
-    } else {
-      console.log("got single pet");
-      res.json(pet);
-    }
-  });
+// Get resolved reports
+router.get("/resolved", (req, res) => {
+  petModel
+    .find({ status: "resolved" }, function (err, pets) {
+      if (err) {
+        res.status(500).json({ error: err.message });
+      } else {
+        res.json(pets);
+      }
+    })
+    .populate("userId");
 });
-// Create new Post
+
+// Get single pet
+router.get("/details/:id", (req, res) => {
+  petModel
+    .findOne({ id: req.params.id })
+    .populate("userId")
+    .exec(function (err, pet) {
+      if (err) {
+        return res.status(500).json({ error: err.message });
+      }
+
+      if (!pet) {
+        return res.status(404).json({ error: "Pet report not found" });
+      }
+
+      res.json(pet);
+    });
+});
+
+// Create new pet report
 router.post("/uploads", (req, res) => {
   const {
-    radio,
+    reportType,
     name,
-    type,
+    species,
     breed,
     color,
-    markers,
+    location,
     info,
     img,
-    comment,
     userId,
-    inSave,
     favorite,
   } = req.body;
 
-  if (!type || !img || !radio) {
+  if (!species || !img || !reportType) {
     return res.status(422).json({
       error:
-        "Please write the species/type of the animal,if your lost or your found it and add a picture",
+        "Please provide the species, report type and a picture of the animal.",
     });
   }
+
   const pet = new petModel({
-    radio,
+    id: `pet_${randomUUID()}`,
+    reportType,
+    status: "active",
     name,
-    type,
+    species,
     breed,
     color,
-    markers,
+    location,
     info,
-    img: img,
-    comment,
+    img,
     userId,
-    inSave,
     favorite,
   });
 
   pet
     .save()
     .then((result) => {
-      let userIdReal = req.body.userId;
-    
       userModel.findByIdAndUpdate(
-        userIdReal,
+        userId,
         { $push: { pets: result._id } },
         { new: true },
-        function (error, success) {
+        function (error) {
           if (error) {
             console.log(error);
-          } else {
-            console.log(success);
           }
         }
       );
 
       res.status(201).json({
-        message: "Handling POST requests to /pet",
+        message: "Pet report created successfully",
         createdPet: result,
       });
     })
     .catch((err) => {
       console.log(err);
+
       res.status(400).json({
-        error: err,
+        error: err.message,
       });
     });
 });
@@ -156,98 +171,99 @@ router.put("/comments", (req, res) => {
         new: true,
       }
     )
-
     .exec((err, result) => {
       if (err) {
-        return res.status(422).json({ error: err });
-      } else {
-        res.json(result);
+        return res.status(422).json({ error: err.message });
       }
+
+      res.json(result);
     });
 });
 
-// Assign inSave == true and radio ==" " to the post
+// Mark report as resolved
 router.put("/atHome", (req, res) => {
-  const inSavePet = {
-    inSave: req.body.inSavePet,
-  };
-
   petModel.findByIdAndUpdate(
     req.body.petId,
-    { $set: { inSave: req.body.inSavePet, radio: " " } },
-    { upsert: true },
+    {
+      $set: {
+        status: "resolved",
+      },
+    },
+    { new: true },
     function (err, result) {
       if (err) {
-        return res.status(422).json({ error: err });
-      } else {
-        res.json(result);
+        return res.status(422).json({ error: err.message });
       }
+
+      res.json(result);
     }
   );
 });
 
+// Delete comment
 router.put("/deleteComment/:petId/:commentId", (req, res) => {
-  const { petId, commentId } = req.params;
-
-
   petModel
     .findByIdAndUpdate(
       req.params.petId,
-      { $pull: { comments: { _id: req.params.commentId } } },
+      {
+        $pull: {
+          comments: {
+            _id: req.params.commentId,
+          },
+        },
+      },
       { new: true },
       function (err, data) {
-    
         if (err) {
           return res.status(404).json({ message: "Error" });
-        } else {
-        
-          res.send(data);
         }
-     
+
+        res.send(data);
       }
     )
     .exec();
 });
 
-//Add favorite to post
+// Add favorite
 router.put("/addFavorite", requireLogin, async (req, res) => {
-  let favorite = req.body.favorite;
-  let userIdReal = req.body.userId;
+  const userIdReal = req.body.userId;
 
   try {
     const addOneFav = await petModel.findByIdAndUpdate(
       req.body.petId,
-      { $push: { favorite: userIdReal } },
+      { $addToSet: { favorite: userIdReal } },
       { new: true }
-  
     );
+
     const addFavInUser = await userModel.updateOne(
       { _id: userIdReal },
-      { $addToSet: { favorites: req.body.petId } },
-      { new: true}
+      { $addToSet: { favorites: req.body.petId } }
     );
-    res.status(200).json({ addFavUser: addFavInUser, addOneFav: addOneFav });
 
+    res.status(200).json({
+      addFavUser: addFavInUser,
+      addOneFav,
+    });
   } catch (err) {
-    console.log({ err: err });
+    console.log(err);
+    res.status(500).json({ error: err.message });
   }
 });
-//Get quantity of likes
-router.get("/favorite/:petId", (req, res) => {
-  let petId = req.params.petId;
 
-  petModel.find({ _id: petId }, "favorite", function (err, result) {
+// Get quantity/list of favorites
+router.get("/favorite/:petId", (req, res) => {
+  petModel.findById(req.params.petId, "favorite", function (err, result) {
     if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
+      return res.status(500).json({ error: err.message });
     }
+
+    res.json(result);
   });
 });
-//Delete Favorites
+
+// Remove favorite
 router.put("/removeFavorite", requireLogin, async (req, res) => {
-  let favorite = req.body.favorite;
-  let userIdReal = req.body.userId;
+  const userIdReal = req.body.userId;
 
   try {
     const removeOneFav = await petModel.findByIdAndUpdate(
@@ -255,53 +271,57 @@ router.put("/removeFavorite", requireLogin, async (req, res) => {
       { $pull: { favorite: userIdReal } },
       { new: true }
     );
+
     const removeFavInUser = await userModel.findByIdAndUpdate(
       userIdReal,
       { $pull: { favorites: req.body.petId } },
-      { new: true}
+      { new: true }
     );
-    res
-      .status(200)
-      .json({ removeFavUser: removeFavInUser, removeOneFav: removeOneFav });
+
+    res.status(200).json({
+      removeFavUser: removeFavInUser,
+      removeOneFav,
+    });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ error: err.message });
   }
 });
-//Delete Post
-router.post("/deletePost", function (req, res) {
-  let postIdt = req.body.postId;
+
+// Delete post
+router.post("/deletePost", (req, res) => {
+  const postId = req.body.postId;
 
   petModel
-    .findOneAndRemove({ _id: req.body.postId }, function (err, response) {
-      if (err) throw err;
+    .findOneAndRemove({ _id: postId })
+    .then(() => {
+      return Promise.all([
+        userModel.updateOne(
+          { pets: postId },
+          {
+            $pull: {
+              pets: postId,
+            },
+          }
+        ),
 
-      userModel.updateOne(
-        { pets: req.body.postId },
-        { $pull: { pets: req.body.postId } },
-        function (err, res) {
-          if (err) {
-            throw err;
-          } else {
- 
+        userModel.updateMany(
+          { favorites: postId },
+          {
+            $pull: {
+              favorites: postId,
+            },
           }
-        }
-      );
-      userModel.updateMany(
-        { favorites: req.body.postId },
-        { $pull: { favorites: req.body.postId } },
-        function (err, res) {
-          if (err) {
-            throw err;
-          } else {
-        
-          }
-        }
-      );
+        ),
+      ]);
     })
-    .then(function () {
+    .then(() => {
       res.json({ message: "success" });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json({ error: err.message });
     });
-
 });
 
 module.exports = router;

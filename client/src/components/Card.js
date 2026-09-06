@@ -40,10 +40,7 @@ const useStyles = makeStyles((theme) => ({
 export default function CardPet(props) {
   let pet = props.pet;
 
-  let petFavorite = pet.favorite;
-
-  let [setNumberFavorite] = useState([]);
-
+  let petFavorite = pet.favorite || [];
 
   const {
     heart,
@@ -59,10 +56,6 @@ export default function CardPet(props) {
 
 
   useEffect(() => {
-    setNumberFavorite(petFavorite);
-  }, [heart, userFavoritesArray]);
-
-  useEffect(() => {
     let profileFetch = () => {
       fetch(`${serverURL}/users/userProfile/${userId}`, {
         method: "GET",
@@ -73,7 +66,7 @@ export default function CardPet(props) {
         .then((res) => res.json())
         .then((data) => {
         
-          setUserFavoritesArray(data[0].favorites);
+          setUserFavoritesArray(data[0]?.favorites || []);
         });
     };
     profileFetch();
@@ -90,7 +83,7 @@ export default function CardPet(props) {
       >
         <div style={{ display: "flex" }}>
           <img
-            src={pet.userId.pic}
+            src={pet.userId?.pic}
             alt="card"
             style={{ width: 50, height: 50, borderRadius: 100 }}
           />
@@ -102,14 +95,14 @@ export default function CardPet(props) {
               marginLeft: 5,
             }}
           >
-            {pet.userId.username}
+            {pet.userId?.username}
           </p>
         </div>
-        {pet.userId._id === userId && <RemovePost petId={pet._id} />}
+        {pet.userId?._id === userId && <RemovePost petId={pet._id} />}
       </div>
-      <Link style={{ textDecoration: "none" }} to={`details/${pet._id}`}>
+      <Link style={{ textDecoration: "none" }} to={`/details/${pet.id}`}>
         <CardActionArea>
-          {pet.inSave === true && (
+          {pet.status === "resolved" && (
             <div className={classes.mask}>
               <p
                 style={{
@@ -144,13 +137,14 @@ export default function CardPet(props) {
               <span style={{ fontWeight: "bold" }}>Breed:</span> {pet.breed}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              <span style={{ fontWeight: "bold" }}>ID:</span> {pet._id}
+              <span style={{ fontWeight: "bold" }}>ID:</span> {pet.id}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              <span style={{ fontWeight: "bold" }}>Specie: </span> {pet.type}
+              <span style={{ fontWeight: "bold" }}>Species: </span>{" "}
+              {pet.species}
             </Typography>
             <Typography variant="body2" color="textSecondary" component="p">
-              <ConvertedAddress markers={pet.markers} />
+              <ConvertedAddress location={pet.location} />
             </Typography>
           </CardContent>
         </CardActionArea>
@@ -159,7 +153,7 @@ export default function CardPet(props) {
         <Button size="small" color="primary">
           <Link
             style={{ textDecoration: "none", color: "orange" }}
-            to={`details/${pet._id}`}
+            to={`/details/${pet.id}`}
           >
             More information
           </Link>
@@ -177,7 +171,7 @@ export default function CardPet(props) {
         <BackAtHome
           userIdOfThePost={pet.userId}
           petId={pet._id}
-          inSave={pet.inSave}
+          status={pet.status}
         />
       </CardActions>
     </Card>
